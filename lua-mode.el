@@ -1054,15 +1054,16 @@ A left-shifter is a partial lua expression which should be ignored for line up p
    ^         ^
    |         +- not here
    +- Close here"
-  (save-excursion
-    (let ((old-point (point)))
-      (back-to-indentation)
-      (and
-       (or (looking-at "local\\s +\\(?:\\(?:\\sw\\|\\s_\\)+\\s *\\(,\\s *\\(?:\\sw\\|\\s_\\)+\\s *\\)*=\\s *\\)?")
-           ;; This is too generic, and will screw up a lot of indentations. Will need
-           ;; a better regexp for assignments
-           (looking-at "[^=]*=\\s *"))
-       (= old-point (match-end 0))))))
+  (or (eq (char-after) (string-to-char "{"))
+      (save-excursion
+        (let ((old-point (point)))
+          (back-to-indentation)
+          (and
+           (or (looking-at "local\\s +\\(?:\\(?:\\sw\\|\\s_\\)+\\s *\\(,\\s *\\(?:\\sw\\|\\s_\\)+\\s *\\)*=\\s *\\)?")
+               ;; This is too generic, and will screw up a lot of indentations. Will need
+               ;; a better regexp for assignments
+               (looking-at "[^=]*=\\s *"))
+           (= old-point (match-end 0)))))))
 
 (defun lua-calculate-indentation-override (&optional parse-start)
   "Return overriding indentation amount for special cases.
